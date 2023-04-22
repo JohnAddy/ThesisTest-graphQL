@@ -4,12 +4,14 @@ const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
 const movieSchema = require("./schema/schema");
 const resolvers = require("./resolver/resolver");
+const cors = require("cors");
 
 mongoose
   .connect(
     "mongodb+srv://johnadekunle2018:SRrIsDlsAvpkY0qR@cluster0.ft1ycxk.mongodb.net/moviediary?retryWrites=true&w=majority",
     {
       useNewUrlParser: true,
+      //  useCreateIndex: true,
       useUnifiedTopology: true,
     }
   )
@@ -25,14 +27,17 @@ const schema = buildSchema(`
 
 //GraphQL
 const app = express();
+
 app.use(
   "/graphql",
   graphqlHTTP({
     schema: movieSchema,
-    rootValue,
+    rootValue: resolvers,
     graphiql: true,
   })
 );
+
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Node - My Thesis Backend Server");
